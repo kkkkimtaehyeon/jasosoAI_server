@@ -21,7 +21,7 @@ async def generate_ai_cover_letter(request: AiCoverLetterGenerationRequest,
     return service.generate_ai_cover_letter(user_id, request)
 
 
-@router.patch('/{cover-letter-id}/type', status_code=status.HTTP_201_CREATED)
+@router.patch('/{cover_letter_id}/type', status_code=status.HTTP_201_CREATED)
 async def convert_cover_letter_type(cover_letter_id: int,
                                     background_tasks: BackgroundTasks,
                                     user_id: int = Depends(get_current_user_id),
