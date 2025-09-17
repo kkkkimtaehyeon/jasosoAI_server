@@ -11,14 +11,14 @@ class JobPostingService:
         self.repo = repo
         self.analyze_service = analyze_service
 
-    def get_job_posting(self, job_posting_url: str):
+    async def get_job_posting(self, job_posting_url: str) -> JobPosting:
         job_posting = self.repo.find_by_url(job_posting_url)
         if not job_posting:
             # 채용공고 분석
-            analyze_result = self.analyze_service.analyze_job_posting(job_posting_url)
+            analyze_result = await self.analyze_service.analyze_job_posting(job_posting_url)
             # 채용공고 DB 저장
             job_posting = self.repo.save(JobPosting(
-                url=analyze_result.url,
+                url=job_posting_url,
                 company_name=analyze_result.company,
                 position_title=analyze_result.position_name,
                 position_detail=analyze_result.position_detail,

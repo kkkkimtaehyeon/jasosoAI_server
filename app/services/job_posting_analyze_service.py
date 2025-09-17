@@ -1,14 +1,14 @@
 import os
-from typing import Union
 
-from PIL import Image
 from dotenv import load_dotenv
 from google import genai
 from google.genai.types import GenerateContentConfig
 from pydantic import TypeAdapter
 
 from app.schemas.job_posting import JobPostingAnalyzeResponse
+from app.services.gemini_service import generate_content
 from app.utils.job_posting_crawlers.job_posting_crawler_factory import JobPostingCrawlerFactory
+from app.utils.logging import logger
 
 WANTED = 'https://www.wanted.co.kr/'
 JOBKOREA = 'https://www.jobkorea.co.kr/'
@@ -54,21 +54,31 @@ def analyze_job_posting_from_text(raw_text: str) -> JobPostingAnalyzeResponse:
         )
     )
     result = TypeAdapter(JobPostingAnalyzeResponse).validate_json(response.text)
-    print(f'채용공고 분석 완료: {result}')
+    # print(f'채용공고 분석 완료: {result}')
     return result
+
+
+async def analyze_job_posting_from_text2(raw_text: str) -> JobPostingAnalyzeResponse:
+    prompt = get_job_posting_analyze_prompt(raw_text)
+    return await generate_content(prompt, JobPostingAnalyzeResponse)
 
 
 class JobPostingAnalyzeService:
     def __init__(self):
         pass
 
-    def analyze_job_posting(self, job_posting_url: str) -> JobPostingAnalyzeResponse:
-        # 1. 채용공고 크롤링
-        crawler = JobPostingCrawlerFactory.get_crawler(job_posting_url)
-        raw_data = crawler.crawl(job_posting_url)
-        print(f'크롤링 완료: {raw_data}')
-        # 2. llm으로 채용공고 분석
-        return analyze_job_posting_from_text(raw_data)
+    async def analyze_job_posting(self, job_posting_url: str) -> JobPostingAnalyzeResponse:
+        try:
+            # 1. 채용공고 크롤링
+            crawler = JobPostingCrawlerFactory.get_crawler(job_posting_url)
+            raw_data = crawler.crawl(job_posting_url)
+            # 2. llm으로 채용공고 분석
+            job_posting_analyzing_response = await analyze_job_posting_from_text2(raw_data)
+            logger.info(f'채용공고 분석 완료: {job_posting_url}')
+            return job_posting_analyzing_response
+        except Exception as e:
+            logger.error(f'채용공고 분석 실패: {job_posting_url}, error: {e}')
+            raise e
 
 
 def get_job_posting_analyze_service() -> JobPostingAnalyzeService:

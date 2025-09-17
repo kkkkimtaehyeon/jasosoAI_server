@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
 from starlette import status
 
-from app.core.security import get_current_user_id, get_current_user
+from app.core.security import get_current_user
 from app.models.cover_letter import CoverLetterType
 from app.models.users import User
 from app.schemas.cover_letter import CoverLetterAdditionRequest, CoverLetterSimpleResponse, CoverLetterResponse, \
@@ -19,9 +19,9 @@ router = APIRouter(
 @router.post('/user', status_code=status.HTTP_201_CREATED)
 async def add_cover_letter(request: CoverLetterAdditionRequest,
                            background_tasks: BackgroundTasks,
-                           user_id: int = Depends(get_current_user_id),
                            user: User = Depends(get_current_user),
                            service: CoverLetterService = Depends(get_cover_letter_service)):
+    # 임베딩 API 호출 제한 확인
     try:
         cover_letter_id = service.create_cover_letter(user.id, request, background_tasks)
     except Exception as e:
@@ -30,11 +30,11 @@ async def add_cover_letter(request: CoverLetterAdditionRequest,
 
 
 @router.get('', status_code=status.HTTP_200_OK, response_model=list[CoverLetterSimpleResponse])
-async def get_cover_letters(type: Optional[CoverLetterType] = CoverLetterType.USER,
+async def get_cover_letters(cv_type: Optional[CoverLetterType] = CoverLetterType.USER,
                             user: User = Depends(get_current_user),
                             service: CoverLetterService = Depends(get_cover_letter_service)) -> list[
     CoverLetterSimpleResponse]:
-    cover_letters = service.get_cover_letters(user.id, type)
+    cover_letters = service.get_cover_letters(user.id, cv_type)
     return cover_letters
 
 
@@ -56,6 +56,7 @@ async def update_cover_letter(cover_letter_id: int,
 
 @router.delete('/{cover_letter_id}', status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 async def delete_cover_letter(cover_letter_id: int,
+                              background_tasks: BackgroundTasks,
                               user: User = Depends(get_current_user),
                               service: CoverLetterService = Depends(get_cover_letter_service)) -> None:
-    service.remove_cover_letter(user.id, cover_letter_id)
+    service.remove_cover_letter(user.id, cover_letter_id, background_tasks)

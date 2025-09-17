@@ -10,11 +10,6 @@ from app.services.user_service import get_user_service, UserService
 
 router = APIRouter()
 
-# Google Cloud Console에서 얻은 클라이언트 ID
-GOOGLE_CLIENT_ID = "973959640180-ku3hg81hm46rp49k00i7i7tsjfl99gue.apps.googleusercontent.com"
-# Google Cloud Console에서 설정한 리디렉션 URI
-GOOGLE_REDIRECT_URI = "http://localhost:8000/auth/google/callback"
-
 
 class Token(BaseModel):
     token: str
@@ -40,7 +35,8 @@ async def google_login(request: Request,
         name = user_info['name']
 
         # 유저 DB 유무 확인
-        user_detail = service.get_oauth_user(oauth_id, email, name)
+        oauth_provider = 'google'
+        user_detail = service.get_oauth_user(oauth_id, email, name, oauth_provider)
 
         # 세션 생성
         create_session(request, UserCredentials(username=user_detail.id,

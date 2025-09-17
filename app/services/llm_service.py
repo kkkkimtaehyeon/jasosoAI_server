@@ -5,6 +5,9 @@ from google import genai
 from google.genai.types import GenerateContentConfig
 from pydantic import TypeAdapter
 
+from app.models.cover_letter_item import CoverLetterItem
+from app.models.job_posting import JobPosting
+
 _ = load_dotenv()
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')

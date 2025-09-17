@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, constr
 
 class UserCredentials(BaseModel):
     username: int
-    email: EmailStr
+    email: str
     name: str
 
 

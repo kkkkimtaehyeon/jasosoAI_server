@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-@router.post('/')
+@router.post('')
 async def created_feedback(request: FeedbackCreationRequest,
                            user: User = Depends(get_current_user),
                            db: Session = Depends(get_db)):

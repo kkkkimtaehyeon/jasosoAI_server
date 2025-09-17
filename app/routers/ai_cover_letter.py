@@ -14,13 +14,15 @@ router = APIRouter(
 )
 
 
+# AI 자소서 생성
 @router.post('/ai', status_code=status.HTTP_201_CREATED)
 async def generate_ai_cover_letter(request: AiCoverLetterGenerationRequest,
                                    user_id: int = Depends(get_current_user_id),
                                    service: AiCoverLetterService = Depends(get_ai_cover_letter_service)) -> int:
-    return service.generate_ai_cover_letter(user_id, request)
+    return await service.generate_ai_cover_letter(user_id, request)
 
 
+# 자소서 타입 변경 (AI -> USER)
 @router.patch('/{cover_letter_id}/type', status_code=status.HTTP_201_CREATED)
 async def convert_cover_letter_type(cover_letter_id: int,
                                     background_tasks: BackgroundTasks,

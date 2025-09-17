@@ -7,9 +7,9 @@ from app.utils.job_posting_crawlers.wanted_crawler import WantedCrawler
 from app.utils.job_posting_crawlers.zighang_crawler import ZighangCrawler
 
 WANTED = 'https://www.wanted.co.kr/'
+ZIGHANG = 'https://zighang.com/'
 JOBKOREA = 'https://www.jobkorea.co.kr/'
 SARMIN = 'https://www.saramin.co.kr/'
-ZIGHANG = 'https://zighang.com/'
 
 
 class JobPostingCrawlerFactory:

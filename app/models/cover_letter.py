@@ -22,8 +22,9 @@ class CoverLetter(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime, onupdate=func.now())
+    updated_at = Column(DateTime, nullable=True)
     type = Column(Enum(CoverLetterType), default=CoverLetterType.USER, nullable=False)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     # 1:N 관계: CoverLetter가 여러 개의 CoverLetterItem을 가짐
     items: Mapped[list[CoverLetterItem]] = relationship("CoverLetterItem", back_populates="cover_letter", cascade="all, delete-orphan")

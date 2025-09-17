@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api:
+    image: 4kimtaehyeon/jasosoai-api:latest
+    container_name: jasosoai-api
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    networks:
+      - jasosoai-network
+    #    restart: on-failure
+    depends_on:
+      - postgresql
+    volumes:
+      - ./chroma_db:/app/core/chroma_db
+
+  postgresql:
+    image: postgres:15.8
+    container_name: jasosoai-postgresql
+    ports:
+      - "5433:5433"
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: jasosoai
+      POSTGRES_USER: postgres
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    networks: # 이 부분이 추가됨
+      - jasosoai-network
+    command: postgres -p 5433
+
+
+
+networks:
+  jasosoai-network:
+    driver: bridge
+volumes:
+  postgresql-data:

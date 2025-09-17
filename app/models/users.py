@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -15,6 +15,8 @@ class User(Base):
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     oauth_id = Column(String(255), nullable=True, unique=True)
+    oauth_provider = Column(String(50), nullable=True)
+    is_banned = Column(Boolean, nullable=False, default=False)
 
     # # CoverLetter와 1:N 관계
     cover_letters = relationship(

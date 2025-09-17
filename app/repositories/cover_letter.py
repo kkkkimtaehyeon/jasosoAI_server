@@ -23,7 +23,8 @@ class CoverLetterRepository:
             self.db.query(CoverLetter)
             .filter(
                 CoverLetter.user_id == user_id,
-                CoverLetter.type == type.value
+                CoverLetter.deleted_at == None,
+                CoverLetter.type == type
             )
             .order_by(desc(CoverLetter.created_at))
         )

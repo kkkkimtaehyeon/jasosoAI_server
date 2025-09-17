@@ -13,6 +13,7 @@ DATABASE_URL = os.getenv("DB_URL")
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,  # 연결이 살아있는지 확인
+    # echo=True  # 실행되는 SQL 쿼리 출력
 )
 
 # 세션 클래스 생성
@@ -32,4 +33,4 @@ def get_db() -> Session:
 
 
 def create_db_tables():
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine, checkfirst=True)

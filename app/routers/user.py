@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request
 from starlette import status
 
-from app.core.security import create_session, clear_session
-from app.schemas.user import UserRegistrationRequest, UserLoginRequest, UserCredentials
+from app.core.security import clear_session
+from app.schemas.user import UserRegistrationRequest
 from app.services.user_service import get_user_service, UserService
 
 router = APIRouter(
@@ -23,18 +23,18 @@ async def get_user(user_id: int,
     return service.get_user(user_id)
 
 
-@router.post('/login', status_code=status.HTTP_200_OK)
-async def user_login(request: Request,
-                     login_request: UserLoginRequest,
-                     service: UserService = Depends(get_user_service)):
-    try:
-        user_id = service.authenticate_user(login_request)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e)
-        )
-    create_session(request, UserCredentials(username=user_id))
+# @router.post('/login', status_code=status.HTTP_200_OK)
+# async def user_login(request: Request,
+#                      login_request: UserLoginRequest,
+#                      service: UserService = Depends(get_user_service)):
+#     try:
+#         user_id = service.authenticate_user(login_request)
+#     except ValueError as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=str(e)
+#         )
+#     create_session(request, UserCredentials(username=user_id))
 
 
 @router.post('/logout', status_code=status.HTTP_200_OK)

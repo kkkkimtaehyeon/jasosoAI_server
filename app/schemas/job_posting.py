@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class JobPostingAnalyzeResponse(BaseModel):
-    url: str = Field(..., alias='url')
+    # url: str = Field(..., alias='url')
     company: str = Field(..., alias='companyName')
     position_name: str = Field(..., alias='positionTitle')
     position_detail: str = Field(..., alias='positionDetail')
